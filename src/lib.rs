@@ -33,7 +33,13 @@ fn read_file(file_path: &str) -> Result<String, Box<Error>> {
 }
 
 pub fn search<'a>(query: &str, text: &'a str) -> Vec<&'a str> {
-  vec![]
+  let mut output: Vec<&str> = vec![];
+  for line in text.lines() {
+    if line.contains(query) {
+      output.push(line)
+    }
+  }
+  output
 }
 
 #[cfg(test)]
@@ -44,8 +50,8 @@ mod tests {
   fn dummy() {
     // arrange
     let query = "duct";
-    let text = "Rust: safe, fast, productive. Pick three.";
-    let expected = vec!["safe, fast, productive"];
+    let text = "Rust:\nsafe, fast, productive.\nPick three.";
+    let expected = vec!["safe, fast, productive."];
     // act
     let result = search(query, text);
     // assert
