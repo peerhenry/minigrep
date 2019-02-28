@@ -44,18 +44,53 @@ pub fn search<'a>(query: &str, text: &'a str) -> Vec<&'a str> {
   output
 }
 
+pub fn search_case_insensitive<'a>(query: &str, text: &'a str) -> Vec<&'a str> {
+    let mut output: Vec<&str> = vec![];
+  for line in text.lines() {
+    let lowercase_line = line.to_lowercase();
+    if (&lowercase_line).contains(&query.to_lowercase()) {
+      output.push(line)
+    }
+  }
+  output
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
 
   #[test]
-  fn dummy() {
+  fn search_works() {
     // arrange
     let query = "duct";
     let text = "Rust:\nsafe, fast, productive.\nPick three.";
     let expected = vec!["safe, fast, productive."];
     // act
     let result = search(query, text);
+    // assert
+    assert_eq!(expected, result);
+  }
+
+  #[test]
+  fn case_sensitive() {
+    // arrange
+    let text = "Rust:\nsafe, fast, productive.\nPick three.\nDuct tape.";
+    let query = "duct";
+    let expected = vec!["safe, fast, productive."];
+    // act
+    let result = search(query, text);
+    // assert
+    assert_eq!(expected, result);
+  }
+
+    #[test]
+  fn case_insensitive() {
+    // arrange
+    let text = "Rust:\nsafe, fast, productive.\nPick three.\nTrust me.";
+    let query = "rUsT";
+    let expected = vec!["Rust:", "Trust me."];
+    // act
+    let result = search_case_insensitive(query, text);
     // assert
     assert_eq!(expected, result);
   }
