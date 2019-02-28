@@ -19,13 +19,36 @@ impl Config {
 }
 
 pub fn run(config: Config) -> Result<(), Box<Error>> {
-  read_file(&config.filename)
+  let text = read_file(&config.filename)?;
+  search(&config.query, &text);
+  Ok(())
 }
 
-fn read_file(file_path: &str) -> Result<(), Box<Error>> {
+fn read_file(file_path: &str) -> Result<String, Box<Error>> {
   let mut f = File::open(file_path)?;
   let mut contents = String::new();
   f.read_to_string(&mut contents)?;
   println!("File content:\n{}", contents);
-  Ok(())
+  Ok(contents)
+}
+
+pub fn search<'a>(query: &str, text: &'a str) -> Vec<&'a str> {
+  vec![]
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn dummy() {
+    // arrange
+    let query = "duct";
+    let text = "Rust: safe, fast, productive. Pick three.";
+    let expected = vec!["safe, fast, productive"];
+    // act
+    let result = search(query, text);
+    // assert
+    assert_eq!(expected, result);
+  }
 }

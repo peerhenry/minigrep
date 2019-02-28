@@ -1,5 +1,4 @@
 use minigrep::Config;
-use minigrep::run;
 use std::process; // without this error is unwrap_or_else return type
 use std::env;
 
@@ -11,7 +10,7 @@ fn main() {
   });
   println!("Searching for {}", config.query);
   println!("In file {}", config.filename);
-  if let Err(e) = run(config) {
+  if let Err(e) = minigrep::run(config) {
     println!("Application error: {}", e);
     process::exit(1);
   }
