@@ -20,7 +20,10 @@ impl Config {
 
 pub fn run(config: Config) -> Result<(), Box<Error>> {
   let text = read_file(&config.filename)?;
-  search(&config.query, &text);
+  let match_lines = search(&config.query, &text);
+  for line in match_lines {
+    println!("{}", line);
+  }
   Ok(())
 }
 
@@ -28,7 +31,6 @@ fn read_file(file_path: &str) -> Result<String, Box<Error>> {
   let mut f = File::open(file_path)?;
   let mut contents = String::new();
   f.read_to_string(&mut contents)?;
-  println!("File content:\n{}", contents);
   Ok(contents)
 }
 
