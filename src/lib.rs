@@ -1,10 +1,12 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
+use std::env;
 
 pub struct Config {
   pub query: String,
-  pub filename: String
+  pub filename: String,
+  pub case_sensitive: bool,
 }
 
 impl Config {
@@ -14,14 +16,19 @@ impl Config {
     }
     let query = args[1].clone();
     let filename = args[2].clone();
-    Ok(Config {query, filename })
+    let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+    Ok(Config { query, filename, case_sensitive })
   }
 }
 
 pub fn run(config: Config) -> Result<(), Box<Error>> {
   let text = read_file(&config.filename)?;
-  let match_lines = search(&config.query, &text);
-  for line in match_lines {
+  let matching_lines = if config.case_sensitive {
+    search(&config.query, &text)
+  } else {
+    search_case_insensitive(&config.query, &text)
+  };
+  for line in matching_lines {
     println!("{}", line);
   }
   Ok(())
@@ -45,10 +52,10 @@ pub fn search<'a>(query: &str, text: &'a str) -> Vec<&'a str> {
 }
 
 pub fn search_case_insensitive<'a>(query: &str, text: &'a str) -> Vec<&'a str> {
-    let mut output: Vec<&str> = vec![];
+  let query = query.to_lowercase();
+  let mut output: Vec<&str> = vec![];
   for line in text.lines() {
-    let lowercase_line = line.to_lowercase();
-    if (&lowercase_line).contains(&query.to_lowercase()) {
+    if line.to_lowercase().contains(&query) {
       output.push(line)
     }
   }
