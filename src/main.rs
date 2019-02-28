@@ -1,25 +1,17 @@
+use minigrep::Config;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
 fn main() {
   let args: Vec<String> = env::args().collect();
-  let config: Config = parse_config(&args);
+  if args.len() < 3 {
+    panic!("incorrect");
+  }
+  let config: Config = Config::new(args);
   println!("Searching for {}", config.query);
   println!("In file {}", config.filename);
   read_file(&config.filename);
-}
-
-struct Config {
-  query: String,
-  filename: String
-}
-
-fn parse_config(args: &[String]) -> Config {
-  Config{
-    query: args[1].clone(),
-    filename: args[2].clone()
-  }
 }
 
 fn read_file(file_path: &str) {
